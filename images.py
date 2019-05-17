@@ -39,10 +39,11 @@ print(sizes, " Layer sizes")
 
 parameters = n.initialize_parameters(*sizes)
 
-for i in range(0, 1):
+for i in range(0, 10):
     A2, cache = n.forward(X[i], parameters)
 
     cost = n.compute_cost(A2, Y[i], parameters)
+    print(cost)
 
     #grads = n.backward(parameters, cache, X, Y)
 

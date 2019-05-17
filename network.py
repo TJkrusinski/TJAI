@@ -26,7 +26,7 @@ def initialize_parameters(n_x, n_h, n_y):
     return parameters
 
 def sigmoid(x):
-    return 1 / 1 + np.exp(-x)
+    return 1 / (1 + np.exp(-x))
 
 def forward(X, parameters):
     W1 = parameters['W1']
@@ -50,10 +50,11 @@ def forward(X, parameters):
 
 def compute_cost(A2, Y, parameters):
 
-    log = np.log(A2.T) * Y
-    log2 = np.log(A2.T) * (1 - Y)
-
+    log = np.multiply(np.log(A2), Y)
+    log2 = np.multiply(np.log(1 - A2), (1 - Y))
     cost = log + log2
+
+    cost = -np.sum(cost) / A2.shape[1]
 
     cost = np.squeeze(cost)
     return cost
