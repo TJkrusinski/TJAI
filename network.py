@@ -5,16 +5,16 @@ import numpy as np
 np.random.seed(2)
 
 def layer_sizes(X, Y):
-    n_x = X.shape[1]
-    n_h = X.shape[1]
-    n_y = Y.shape[1]
+    n_x = X.shape[0]
+    n_h = X.shape[0]
+    n_y = Y.shape[0]
     return (n_x, n_h, n_y)
 
-def initialize_parameters(n_x, n_h, n_y):
-    W1 = np.random.randn(n_h, n_x) * 0.01
+def initialize_parameters(n_i, n_h, n_o):
+    W1 = np.random.randn(n_h, n_i) * 0.000001
     b1 = np.zeros(shape=(n_h, 1))
-    W2 = np.random.randn(n_y, n_h) * 0.01
-    b2 = np.zeros(shape=(n_y, 1))
+    W2 = np.random.randn(n_o, n_h) * 0.000001
+    b2 = np.zeros(shape=(n_o, 1))
 
     parameters = {
         "W1": W1,
@@ -37,7 +37,7 @@ def forward(X, parameters):
     Z1 = np.dot(W1, X) + b1
     A1 = np.tanh(Z1)
     Z2 = np.dot(W2, A1) + b2
-    A2 = np.array([sigmoid(z) for z in Z2])
+    A2 = sigmoid(Z2)
 
     cache = {
         "Z1": Z1,
@@ -49,28 +49,26 @@ def forward(X, parameters):
     return A2, cache
 
 def compute_cost(A2, Y, parameters):
-
-    log = np.multiply(np.log(A2), Y)
-    log2 = np.multiply(np.log(1 - A2), (1 - Y))
-    cost = log + log2
-
-    cost = -np.sum(cost) / A2.shape[1]
-
+    m = Y.shape[1]
+    logprobs = np.multiply(np.log(A2), Y) + np.multiply((1 - Y), np.log(1 - A2))
+    cost = - np.sum(logprobs) / m  
     cost = np.squeeze(cost)
     return cost
 
 def backward(parameters, cache, X, Y):
     W1 = parameters['W1']
     W2 = parameters['W2']
-    m = len(Y)
 
     A1 = cache['A1']
     A2 = cache['A2']
+    
+    m = X.shape[1]
 
     dZ2 = A2 - Y
+
     dW2 = (1 / m) * np.dot(dZ2, A1.T)
     db2 = (1 / m) * np.sum(dZ2, axis=1, keepdims=True)
-    dZ1 = np.multiply(np.dot(W2.T, dZ2), 1 - np.power(A1, 1))
+    dZ1 = np.multiply(np.dot(W2.T, dZ2), 1 - np.power(A1, 2))
     dW1 = (1 / m) * np.dot(dZ1, X.T)
     db1 = (1 / m) * np.sum(dZ1, axis=1, keepdims=True)
 

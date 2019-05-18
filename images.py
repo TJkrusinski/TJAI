@@ -7,7 +7,7 @@ import time
 training_images = ImageData('training_images')
 training_labels = LabelData('training_labels')
 
-num = 1000
+num = 10000
 pixels = 28 * 28 * num
 image_skip = 4+4+4+4
 label_skip = 4 + 4
@@ -29,6 +29,9 @@ X = X_ / 255.0
 X = X.reshape((num, 28 * 28))
 Y = Y.reshape((num, 10))
 
+X = X.T
+Y = Y.T
+
 #print(Image(X[1]).print())
 
 print(X.shape, " X shape")
@@ -39,14 +42,12 @@ print(sizes, " Layer sizes")
 
 parameters = n.initialize_parameters(*sizes)
 
-for i in range(0, 10):
-    A2, cache = n.forward(X[i], parameters)
+for i in range(0, 1000):
 
-    cost = n.compute_cost(A2, Y[i], parameters)
+    A2, cache = n.forward(X, parameters)
+    cost = n.compute_cost(A2, Y, parameters)
+    grads = n.backward(parameters, cache, X, Y)
+    parameters = n.update_parameters(parameters, grads, learning_rate)
     print(cost)
 
-    #grads = n.backward(parameters, cache, X, Y)
 
-    #parameters = n.update_parameters(parameters, grads, learning_rate)
-
-    #print(A2)
